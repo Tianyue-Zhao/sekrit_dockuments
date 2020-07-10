@@ -94,7 +94,7 @@ def callback(data, IO):
     cur_secs = int(cur_time)
     if((not data.header.stamp.secs == cur_secs) or
         ((cur_time - cur_secs) * 1000000000
-        - data.header.stamp.nsecs > 50000000)):
+        - data.header.stamp.nsecs > 10000000)):
         return
     cur_points = laser_parser(data)
     if((not IO[0].laser_on) and (IO[2]%10==0)):
