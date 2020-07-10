@@ -8,7 +8,6 @@ import sys
 import time
 from parser import laser_parser
 
-import click
 import numpy as np
 import rospy
 from ackermann_msgs.msg import AckermannDriveStamped
@@ -481,11 +480,6 @@ def cost_handle(visualize, opponent, frame_rate):
 """
 
 
-@click.command()
-@click.option("--visualize", is_flag=True)
-@click.option("--opponent", is_flag=True)
-@click.option("--frame_rate", default=10)
-@click.option("--pid", is_flag=True)
 def handle(visualize, opponent, frame_rate, pid):
     global listener
     rospy.init_node("local_algorithm", anonymous=True)
