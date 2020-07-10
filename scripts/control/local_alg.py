@@ -234,7 +234,7 @@ class local_alg:
                             )
                         )
                         * self.length_weights[k]
-                        * 15
+                        * 10
                     )
         # Add current steering angle to simulator
         self.simulator.steer_angle = self.angles[np.argmin(costs)]

@@ -68,6 +68,7 @@ indices = []
 predicted_paths = []
 count = 0
 newest_pos = np.zeros(3)
+newest_index = [0]
 
 # Turning rate in #adjustment/steering
 STEER_SPEED = 0.01
@@ -95,6 +96,13 @@ def callback(data, IO):
     if((not data.header.stamp.secs == cur_secs) or
         ((cur_time - cur_secs) * 1000000000
         - data.header.stamp.nsecs > 10000000)):
+        if(IO[0].laser_on):
+            message = AckermannDriveStamped()
+            message.header.stamp = rospy.Time.now()
+            message.header.frame_id = "No visualization"
+            message.drive.steering_angle = IO[0].angles[IO[5][0]]
+            message.drive.speed = IO[0].speeds[IO[5][0]]
+            IO[1].publish(message)
         return
     cur_points = laser_parser(data)
     if((not IO[0].laser_on) and (IO[2]%10==0)):
@@ -109,6 +117,7 @@ def callback(data, IO):
     #    steer_angle -= STEER_SPEED
     # else:
     #    steer_angle = angle
+    IO[5][0] = index
     message = AckermannDriveStamped()
     message.header.stamp = rospy.Time.now()
     message.header.frame_id = "No visualization"
@@ -180,6 +189,13 @@ def callback_vis(data, IO):
     if((not data.header.stamp.secs == cur_secs) or
         ((cur_time - cur_secs) * 1000000000
         - data.header.stamp.nsecs > 10000000)):
+        if(IO[0].laser_on):
+            message = AckermannDriveStamped()
+            message.header.stamp = rospy.Time.now()
+            message.header.frame_id = "No visualization"
+            message.drive.steering_angle = IO[0].angles[IO[5][0]]
+            message.drive.speed = IO[0].speeds[IO[5][0]]
+            IO[1].publish(message)
         return
     cur_points = laser_parser(data)
     if((not IO[0].laser_on) and (IO[2]%10==0)):
@@ -190,6 +206,7 @@ def callback_vis(data, IO):
     [angle, index, cur_costs, waypoints, paths] = IO[0].decide_direction(
         cur_points, IO[3]
     )
+    IO[5][0] = index
     # Save the laser scan points for visualization
     # if not IO[2] % 10 == 0:
     #    return
@@ -459,7 +476,7 @@ def cost_handle(visualize, opponent, frame_rate):
             LASER_TOPIC,
             LaserScan,
             callback_vis,
-            [decider, announcer, visualize, newest_pos, point_export],
+            [decider, announcer, visualize, newest_pos, point_export, newest_index],
         )
         # Subscribe to the odom topic and save the newest position
         # whenever one is published
@@ -471,7 +488,7 @@ def cost_handle(visualize, opponent, frame_rate):
             LASER_TOPIC,
             LaserScan,
             callback,
-            [decider, announcer, count, newest_pos, point_export],
+            [decider, announcer, count, newest_pos, point_export, newest_index],
         )
         rospy.Subscriber(ODOM_TOPIC, Odometry, save_odom, [newest_pos, decider])
     rospy.spin()
@@ -522,7 +539,7 @@ def handle(visualize, opponent, frame_rate, pid):
             LASER_TOPIC,
             LaserScan,
             callback_vis,
-            [decider, announcer, visualize, newest_pos, point_export],
+            [decider, announcer, visualize, newest_pos, point_export, newest_index],
         )
         # Subscribe to the odom topic and save the newest position
         # whenever one is published
@@ -542,7 +559,7 @@ def handle(visualize, opponent, frame_rate, pid):
             LASER_TOPIC,
             LaserScan,
             callback,
-            [decider, announcer, count, newest_pos, point_export],
+            [decider, announcer, count, newest_pos, point_export, newest_index],
         )
         rospy.Subscriber(ODOM_TOPIC, Odometry, save_odom, [newest_pos, decider])
     rospy.spin()
