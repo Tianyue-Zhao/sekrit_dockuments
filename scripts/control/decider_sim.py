@@ -113,7 +113,11 @@ def callback(data, IO):
     message.header.stamp = rospy.Time.now()
     message.header.frame_id = "No visualization"
     message.drive.steering_angle = angle * 1.5
-    message.drive.speed = configs["speeds"][index]
+    target_speed = IO[0].speeds[index]
+    actual_speed = IO[0].simulator.velocity
+    if(target_speed < actual_speed - 0.2):
+        target_speed = actual_speed - 0.2
+    message.drive.speed = target_speed
     IO[1].publish(message)
     publish_points(IO[0].paths[index, :, :], IO[4])
 
@@ -549,4 +553,4 @@ def handle(visualize, opponent, frame_rate, pid):
 if __name__ == "__main__":
     time.sleep(1)
     #handle()
-    cost_handle(True, False, 30)
+    cost_handle(False, False, 30)
