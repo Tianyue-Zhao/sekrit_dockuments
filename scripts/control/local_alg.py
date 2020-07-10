@@ -234,7 +234,7 @@ class local_alg:
                             )
                         )
                         * self.length_weights[k]
-                        * 10
+                        * 15
                     )
         # Add current steering angle to simulator
         self.simulator.steer_angle = self.angles[np.argmin(costs)]
@@ -267,7 +267,7 @@ class local_alg:
             print(total)
             self.laser_on = True
             self.speeds = self.speeds_obstacle
-            self.next_thresh += 2
+            self.next_thresh += 2.1
             print('Switched to obstacle mode')
 
 

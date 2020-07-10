@@ -96,7 +96,7 @@ def callback(data, IO):
     if((not data.header.stamp.secs == cur_secs) or
         ((cur_time - cur_secs) * 1000000000
         - data.header.stamp.nsecs > 10000000)):
-        if(IO[0].laser_on):
+        if(IO[0].laser_on and IO[2] % 5 == 0):
             message = AckermannDriveStamped()
             message.header.stamp = rospy.Time.now()
             message.header.frame_id = "No visualization"
@@ -121,7 +121,7 @@ def callback(data, IO):
     message = AckermannDriveStamped()
     message.header.stamp = rospy.Time.now()
     message.header.frame_id = "No visualization"
-    message.drive.steering_angle = angle * 1.5
+    message.drive.steering_angle = angle
     target_speed = IO[0].speeds[index]
     actual_speed = IO[0].simulator.velocity
     if(target_speed < actual_speed - 0.2):

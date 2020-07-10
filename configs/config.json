@@ -3,7 +3,7 @@
   "speeds_tmp": [2.5,3,4,4,5,6,20,20,20,6,5,4,4,3,2.5],
   "speeds_obstacle": [2,4,4,4,4,4,4,4,4,4,4,4,4,4,2],
   "speeds": [2.5,3,4,4,5,6,7.5,12,7.5,6,5,4,4,3,2.5],
-  "num_steps": 150,
+  "num_steps": 100,
   "num_waypoints": 3,
   "dis_exp": -1,
   "step_size": 0.1,
@@ -19,7 +19,7 @@
   "waypoint_weights": [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],
   "waypoint_multipliers": [8,0.5,0.1],
   "map_txt": "tools/berlin_blurred.txt",
-  "obstacle_thresh": 3825,
+  "obstacle_thresh": 5100,
   "map_orig": [-11.60654,-26.520793],
   "map_resolution": 0.05
 }
