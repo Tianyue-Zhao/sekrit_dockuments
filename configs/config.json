@@ -7,7 +7,7 @@
   "num_waypoints": 3,
   "dis_exp": -1,
   "step_size": 0.1,
-  "dis_threshold": 0.3,
+  "dis_threshold": 0.5,
   "length_exp": -0.8,
   "hori_size": 10,
   "vert_size": 10,
