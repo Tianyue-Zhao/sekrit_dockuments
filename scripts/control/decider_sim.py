@@ -105,8 +105,8 @@ def callback(data, IO):
             IO[1].publish(message)
         return
     cur_points = laser_parser(data)
-    if((not IO[0].laser_on) and (IO[2]%10==0)):
-        IO[0].check_obstacle(cur_points, IO[3])
+    #if((not IO[0].laser_on) and (IO[2]%10==0)):
+    #    IO[0].check_obstacle(cur_points, IO[3])
     # index is the index of the best path
     # tmp is the waypoint visualization
     # this is not used here
@@ -198,9 +198,9 @@ def callback_vis(data, IO):
             IO[1].publish(message)
         return
     cur_points = laser_parser(data)
-    if((not IO[0].laser_on) and (IO[2]%10==0)):
-        scan_callback(data)
-        IO[0].check_obstacle(cur_points, IO[3])
+    #if((not IO[0].laser_on) and (IO[2]%10==0)):
+    #    scan_callback(data)
+    #    IO[0].check_obstacle(cur_points, IO[3])
     #time_1 = time.time()
     # index is the index of the best path
     [angle, index, cur_costs, waypoints, paths] = IO[0].decide_direction(
