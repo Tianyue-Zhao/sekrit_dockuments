@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 class car_state:
     def __init__(self):
@@ -11,6 +12,7 @@ class car_state:
         self.steer_angle = 0.0
         self.angular_vel = 0.0
         #Config constants
+        #self.time_delta = 0.01 #f110_env.py
         self.time_delta = 0.01 #f110_env.py
         #racecar.py
         self.max_speed = 20.0;

@@ -49,6 +49,7 @@ class local_alg:
             self.obstacle_thresh = configs['obstacle_thresh']
             self.obstacle_count = 0
             self.speeds_obstacle = np.asarray(configs['speeds_obstacle'])
+            self.predict_paths = True
             dir_name = path.abspath(__file__)
             for i in range(3):
                 dir_name = path.dirname(dir_name)
@@ -159,9 +160,13 @@ class local_alg:
     def decide_direction(self, points, position):
         # Predict the paths
         num_candidates = len(self.candidate_rs)
-        self.paths = self.simulator.predict_state(self.angles, self.speeds)
-        for i in range(num_candidates):
-            self.paths[i,:,:] = self.transform_to_local(self.paths[i,:,:], position)
+        time_1 = time.time()
+        if(self.predict_paths):
+            self.paths = self.simulator.predict_state(self.angles, self.speeds)
+            for i in range(num_candidates):
+                self.paths[i,:,:] = self.transform_to_local(self.paths[i,:,:], position)
+        time_2 = time.time()
+        print(time_2 - time_1)
         # Points is the list of obstacle points
         costs = np.zeros(num_candidates)
         if self.sim_flag:
@@ -196,6 +201,14 @@ class local_alg:
                 relative_waypoint = self.transform_to_local(
                     cur_waypoint, position
                 )
+                ## Conduct switching between predict and no-predict
+                #if(self.cur_waypoint == 12):
+                #    self.predict_paths = False
+                #    self.generate_paths()
+                #    print('No predict')
+                #if(self.cur_waypoint == 17):
+                #    self.predict_paths = True
+                #    print('Predict')
             # Gather multiple waypoints
             cur_waypoints = np.zeros((self.num_waypoints,2))
             waypoint_indices = []

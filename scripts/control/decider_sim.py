@@ -238,8 +238,6 @@ def callback_vis(data, IO):
     indices.append(index)
     IO[1].publish(message)
     publish_points(IO[0].paths[index, :, :], IO[4])
-    #time_2 = time.time()
-    #print(time_2 - time_1)
 
 
 """
@@ -483,7 +481,7 @@ def pid_handle():
 def cost_handle(visualize, opponent, frame_rate):
     rospy.init_node("local_algorithm", anonymous=True)
     decider = local_alg(CONFIG_FILE)
-    announcer = rospy.Publisher(CONTROL_TOPIC, AckermannDriveStamped, queue_size=2)
+    announcer = rospy.Publisher(CONTROL_TOPIC, AckermannDriveStamped, queue_size=1)
     point_export = rospy.Publisher(PATH_TOPIC, Float32MultiArray, queue_size=2)
     FRAME_RATE = frame_rate
     if visualize:
