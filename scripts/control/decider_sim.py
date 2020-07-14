@@ -584,4 +584,4 @@ def handle(visualize, opponent, frame_rate, pid):
 if __name__ == "__main__":
     time.sleep(1)
     #handle()
-    cost_handle(False, False, 30)
+    cost_handle(True, False, 30)
