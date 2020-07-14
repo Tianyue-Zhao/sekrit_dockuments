@@ -164,14 +164,14 @@ class local_alg:
         # Predict the paths
         num_candidates = len(self.candidate_rs)
         #time_1 = time.time()
+        costs = np.zeros(num_candidates)
         if(self.predict_paths):
-            self.paths = self.simulator.predict_state(self.angles, self.speeds)
+            self.paths, costs = self.simulator.predict_state(self.angles, self.speeds)
             for i in range(num_candidates):
                 self.paths[i,:,:] = self.transform_to_local(self.paths[i,:,:], position)
         #time_2 = time.time()
         #print(time_2 - time_1)
         # Points is the list of obstacle points
-        costs = np.zeros(num_candidates)
         if self.sim_flag:
             tmp_points = np.zeros(points.shape)
             k = 0
@@ -214,7 +214,7 @@ class local_alg:
                 #    print('Predict')
                 # Conduct switching between high speed
                 # and tight corners
-                if(self.cur_waypoint == 25):
+                if(self.cur_waypoint == 22):
                     self.wheel_base = 1.0
                     tmp = self.speeds
                     self.speeds = self.speeds_tight
