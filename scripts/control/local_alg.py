@@ -50,6 +50,7 @@ class local_alg:
             self.obstacle_count = 0
             self.speeds_obstacle = np.asarray(configs['speeds_obstacle'])
             self.speeds_tight = np.asarray(configs['speeds_tight'])
+            self.radius_tight = configs['radius_tight']
             self.predict_paths = True
             dir_name = path.abspath(__file__)
             for i in range(3):
@@ -215,16 +216,22 @@ class local_alg:
                 # and tight corners
                 if(self.cur_waypoint == 25):
                     self.wheel_base = 1.0
-                    self.generate_angles()
                     tmp = self.speeds
                     self.speeds = self.speeds_tight
                     self.speeds_tight = tmp
-                if(self.cur_waypoint == 31):
-                    self.wheel_base = 0.3
+                    tmp = self.candidate_rs
+                    self.candidate_rs = self.radius_tight
+                    self.radius_tight = tmp
                     self.generate_angles()
+                if(self.cur_waypoint == 32):
+                    self.wheel_base = 0.3
                     tmp = self.speeds_tight
                     self.speeds_tight = self.speeds
                     self.speeds = tmp
+                    tmp = self.radius_tight
+                    self.radius_tight = self.candidate_rs
+                    self.candidate_rs = tmp
+                    self.generate_angles()
             # Gather multiple waypoints
             cur_waypoints = np.zeros((self.num_waypoints,2))
             waypoint_indices = []
