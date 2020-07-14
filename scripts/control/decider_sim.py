@@ -55,9 +55,9 @@ MAP_TOPIC = "/map"
 PATH_TOPIC = "/green_path"
 # These are set via command line
 FRAME_RATE = 30
-CONTROL_TOPIC = "/drive"
-LASER_TOPIC = "/scan"
-ODOM_TOPIC = "/odom"
+CONTROL_TOPIC = "/TWI/drive"
+LASER_TOPIC = "/TWI/scan"
+ODOM_TOPIC = "/TWI/odom"
 PUBLISH_PATH = True
 # PID drive publisher
 pid_pub = rospy.Publisher("/drive", AckermannDriveStamped, queue_size=10)
@@ -122,22 +122,11 @@ def callback(data, IO):
     message.header.stamp = rospy.Time.now()
     message.header.frame_id = "No visualization"
     message.drive.steering_angle = angle
-    message.drive.speed = IO[0].speeds[index]
     target_speed = IO[0].speeds[index]
     actual_speed = IO[0].simulator.velocity
     if(target_speed < actual_speed - 0.2):
         target_speed = actual_speed - 0.2
     message.drive.speed = target_speed
-    #if(IO[0].cur_waypoint == 13 and IO[0].simulator.velocity > 5):
-    #    message.drive.speed = 5
-    #    message.drive.steering_angle = 0
-    #    index = 5
-    #    print('Slow down 1')
-    #if(IO[0].cur_waypoint == 22 and IO[0].simulator.velocity > 6):
-    #    message.drive.speed = 6
-    #    message.drive.steering_angle = 0
-    #    index = 5
-    #    print('Slow down 2')
     IO[1].publish(message)
     publish_points(IO[0].paths[index, :, :], IO[4])
 
@@ -209,17 +198,21 @@ def callback_vis(data, IO):
             IO[1].publish(message)
         return
     cur_points = laser_parser(data)
-    #if((not IO[0].laser_on) and (IO[2]%10==0)):
-    #    scan_callback(data)
-    #    IO[0].check_obstacle(cur_points, IO[3])
+    if((not IO[0].laser_on) and (IO[2]%10==0)):
+        scan_callback(data)
+        IO[0].check_obstacle(cur_points, IO[3])
+    #time_1 = time.time()
     # index is the index of the best path
     [angle, index, cur_costs, waypoints, paths] = IO[0].decide_direction(
         cur_points, IO[3]
     )
     IO[5][0] = index
     # Save the laser scan points for visualization
+    # if not IO[2] % 10 == 0:
+    #    return
     points.append(cur_points)
     costs.append(cur_costs)
+    indices.append(index)
     relative_waypoints.append(waypoints)
     predicted_paths.append(paths)
     message = AckermannDriveStamped()
@@ -227,17 +220,10 @@ def callback_vis(data, IO):
     message.header.frame_id = "Visualized"
     message.drive.steering_angle = angle
     message.drive.speed = IO[0].speeds[index]
-    #if(IO[0].cur_waypoint == 12 and IO[0].simulator.velocity > 5):
-    #    message.drive.speed = 5
-    #    message.drive.steering_angle = 0
-    #    index = 5
-    #if(IO[0].cur_waypoint == 22 and IO[0].simulator.velocity > 6):
-    #    message.drive.speed = 6
-    #    message.drive.steering_angle = 0
-    #    index = 5
-    indices.append(index)
     IO[1].publish(message)
     publish_points(IO[0].paths[index, :, :], IO[4])
+    #time_2 = time.time()
+    #print(time_2 - time_1)
 
 
 """
@@ -481,7 +467,7 @@ def pid_handle():
 def cost_handle(visualize, opponent, frame_rate):
     rospy.init_node("local_algorithm", anonymous=True)
     decider = local_alg(CONFIG_FILE)
-    announcer = rospy.Publisher(CONTROL_TOPIC, AckermannDriveStamped, queue_size=1)
+    announcer = rospy.Publisher(CONTROL_TOPIC, AckermannDriveStamped, queue_size=2)
     point_export = rospy.Publisher(PATH_TOPIC, Float32MultiArray, queue_size=2)
     FRAME_RATE = frame_rate
     if visualize:
@@ -584,4 +570,4 @@ def handle(visualize, opponent, frame_rate, pid):
 if __name__ == "__main__":
     time.sleep(1)
     #handle()
-    cost_handle(True, False, 30)
+    cost_handle(False, False, 30)

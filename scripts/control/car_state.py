@@ -1,5 +1,4 @@
 import numpy as np
-import time
 
 class car_state:
     def __init__(self):
@@ -12,7 +11,6 @@ class car_state:
         self.steer_angle = 0.0
         self.angular_vel = 0.0
         #Config constants
-        #self.time_delta = 0.01 #f110_env.py
         self.time_delta = 0.01 #f110_env.py
         #racecar.py
         self.max_speed = 20.0;
@@ -57,10 +55,6 @@ class car_state:
         angular_vel += self.angular_vel
         slip_angle = np.zeros(angles.shape)
         slip_angle += self.slip_angle
-
-        #Spin protection
-        accumulated_theta = np.zeros(angles.shape)
-
         for i in range(self.timesteps):
             #Decide on the steering angle velocity,
             #the steering angle, the acceleration,
@@ -142,9 +136,6 @@ class car_state:
             angular_vel[nk] += theta_double_dot * self.time_delta
             slip_angle[nk] += slip_angle_dot * self.time_delta
 
-            #Add accumulated turn
-            accumulated_theta += np.absolute(angular_vel) * self.time_delta
-
             #Clip velocity and steering angle values
             velocity = np.clip(velocity, -self.max_speed, self.max_speed)
             steer_angle = np.clip(steer_angle, -self.max_steering_angle, self.max_steering_angle)
@@ -152,8 +143,4 @@ class car_state:
             #Add the x and y positions
             all_pos[:,i,0] = x
             all_pos[:,i,1] = y
-        initial_costs = np.zeros(angles.shape)
-        initial_costs[accumulated_theta>4.71238898038469] += 1000000
-        if(np.any(accumulated_theta>4.71238898038469)):
-            print("Spin avoidance")
-        return all_pos, initial_costs
+        return all_pos
