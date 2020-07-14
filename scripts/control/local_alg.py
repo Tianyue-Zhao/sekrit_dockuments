@@ -214,7 +214,7 @@ class local_alg:
                 #    print('Predict')
                 # Conduct switching between high speed
                 # and tight corners
-                if(self.cur_waypoint == 22):
+                if(self.cur_waypoint == 23):
                     self.wheel_base = 1.0
                     tmp = self.speeds
                     self.speeds = self.speeds_tight
